@@ -9,6 +9,7 @@ pandas used for outside of assignment work to find most common anagrams
 
 """
 
+
 def sort(s: str) -> str:
     # returns alphabetized string
     return ''.join(sorted(s))
@@ -18,6 +19,7 @@ def parse(s: str) -> str:
     # removes `\n` and uppercases
     return s.strip().lower()
 
+
 """
 anagrams(l:list): creates a dictionary with alphabetized words as keys, 
     the value is a 2-tuple:
@@ -25,6 +27,8 @@ anagrams(l:list): creates a dictionary with alphabetized words as keys,
         [1] is the count 
 
 """
+
+
 def anagrams(l: list) -> dict:
     d = {}
     for elt in l:
@@ -44,6 +48,8 @@ and a word to lookup
 
 assuming word is parsed (lowercase and no `\n`)
 """
+
+
 def get(d: dict, s: str):
     alphabetized = sort(s)
     return d.get(alphabetized)
@@ -53,6 +59,8 @@ def get(d: dict, s: str):
 io function to read in words file
 
 """
+
+
 def get_words() -> list:
     f = open("english-words-235k.txt", "r")
     lines = f.readlines()
@@ -67,8 +75,16 @@ def main_test(test_str: str):
 
 def make_df():
     d = anagrams(get_words())
-    df = pd.DataFrame.from_dict(d, orient='index', columns=['anagrams', 'count'])
+    df = pd.DataFrame.from_dict(
+        d, orient='index', columns=['anagrams', 'count'])
     return df
+
+
+def min_word_len(min_len: int = 8):
+    df = make_df()
+    words = list(filter(lambda x: len(x) >= min_len, list(df.index)))
+    return df.loc[words].sort_values('count', ascending=False)
+
 
 if __name__ == "__main__":
     main_test('agnor')
