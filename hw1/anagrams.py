@@ -88,3 +88,8 @@ def min_word_len(min_len: int = 8):
 
 if __name__ == "__main__":
     main_test('agnor')
+    df = min_word_len()
+    print('anagrams of minimum length 8')
+    df = df[df['count'] != 1]
+    print(df)
+    print(f"# of anagrams with min len 8: {df['count'].sum()}")
