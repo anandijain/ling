@@ -18,19 +18,6 @@ def parse(s: str) -> str:
     # removes `\n` and uppercases
     return s.strip().lower()
 
-
-def anagrams_count(l: list) -> dict:
-    # like anagrams(), but counts
-    d = {}
-    for elt in l:
-        alphabetized = sort(elt)
-        try:
-            d[alphabetized] += 1
-        except KeyError:
-            d[alphabetized] = 1
-    return d
-
-
 """
 anagrams(l:list): creates a dictionary with alphabetized words as keys, 
     the value is a 2-tuple:
@@ -75,10 +62,8 @@ def get_words() -> list:
 def main_test(test_str: str):
     lines = get_words()
     anagrams_dict = anagrams(lines)
-#    for k, v in anagrams_dict.items():
-#        print(f'{k}: {len(v)} {v} \n')
-
     print(get(anagrams_dict, test_str))
+
 
 def make_df():
     d = anagrams(get_words())
