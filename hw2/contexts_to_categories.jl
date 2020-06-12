@@ -41,22 +41,30 @@ dust(d::Dict; n=50) = filter(x -> sum(values(last(x))) > n, d)
 function get_outputs(;write=false)
 	cs = dust(get_contexts())
 	context_list = sort(DataFrame(:cx=>join.(keys(cs), " "), :wc=>length.(values(cs))), :wc, rev=true)
-	= map(x->DataFrame(:w=>collect(keys(x)), :n=>collect(values(x))), values(cs))
+	dfs = map(x->sort(DataFrame(:w=>collect(keys(x)), :n=>collect(values(x))), :n, rev=true), values(cs))
 	if write
 		CSV.write("context_list.txt", context_list) 
 	end
+	dfs 
 end
 
-function fuckit(dfs)
+function fill_missing(dfs; n=5)
+	rs = []
 	for df in dfs
-		if nrow(df) < 5
+		if nrow(df) < n
 			r = vcat(collect.(zip(df.w[1:end], df.n[1:end]))...)
-			r = vcat(r, fill(missing, 10-length(r)))
+			r = vcat(r, fill(missing, 2n-length(r)))
+			push!(rs, r)
 		else 
 			r = vcat(collect.(zip(df.w[1:5], df.n[1:5]))...)
+			push!(rs, r)
+		end
+		ns = collect(Iterators.flatten(zip("word_" .* string.(1:5), "n_" .* string.(1:5))))
+		DataFrame(rs, names= ns)
+	end
+end
 
-
-export get_lines, get_contexts, get_outputs, dust
+export get_lines, get_contexts, get_outputs, dust, fill_missing
 	
 end
 
