@@ -3,10 +3,13 @@ using CSV, DataFrames, DelimitedFiles
 
 # PUNCTUATION
 to_sep = Vector{Char}([',', ':', '!', ';', '(', ')', '?', '.', '"'])
+
 split_set = Dict(zip(to_sep, map(x -> " $(x) ", to_sep)))
 
 get_lines()::Array{String,1} =
     map(x -> sep(lowercase(x), split_set), readlines("browncorpus.txt"))
+	
+# return triples, with overlap
 contexts(w) = [w[i:(i + 2)] for i = 1:(length(w) - 3)]
 
 function sep(s, pairs)
@@ -81,7 +84,7 @@ function words_in_contexts(df_dict::Dict{String,DataFrame}; n = 5)
 end
 
 function clean_sort_wics(df)
-    df[:, r"n_\d"] = Int.(df[:, r"n_\d"])
+    df[!, r"n_\d"] = Int.(df[:, r"n_\d"])
     df.sum = sum.(eachrow(df[:, r"n_\d"]))
     sort(df, :sum, rev = true)
 end
@@ -90,9 +93,10 @@ function assignment()
     cs = dust(get_contexts())
     cl = context_list(cs)
     wics = words_in_contexts(contexts_to_dfs(cs))
+	@assert any(.!(issorted.(eachrow(wics[:, r"n_\d"]), rev=true))) == false
     cl, wics
 end
 
-export get_lines, get_contexts, context_list, dust, contexts_to_dfs, words_in_contexts
+export get_contexts, context_list, dust, contexts_to_dfs, words_in_contexts, assignment
 
 end
