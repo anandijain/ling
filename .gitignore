@@ -1,4 +1,5 @@
 *.txt
 *.pdf
 *.csv 
+data/
 __pycache__/
